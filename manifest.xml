@@ -1,0 +1,20 @@
+<package>
+  <description brief="woz_simulated_sensors">
+
+    Produces simulated sensor values for Wizard of Oz experiments.
+
+  </description>
+  <author>Mikhail Medvedev</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/woz_simulated_sensors</url>
+
+  <depend package="roscpp"/>
+  <depend package="nav_msgs"/>
+
+  <depend package="woz_sensor_maps"/>
+  <depend package="woz_msgs"/>
+
+</package>
+
+
