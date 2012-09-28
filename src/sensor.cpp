@@ -29,35 +29,65 @@
 
 /* Author: Mikhail Medvedev */
 
-#ifndef SENSOR_MAP_H_
-#define SENSOR_MAP_H_
-
-#include <ros/ros.h>
-#include <nav_msgs/OccupancyGrid.h>
+#include "sensor.h"
 
 namespace woz_simulated_sensors
 {
-/**
- * Manages single sensory gradient map.
- */
-class SensorMap
+
+Sensor::Sensor(const std::string& id, const std::string& description,
+               double min, double max, double mean, double noise_sigma,
+               bool use_map) :
+        min_(min),
+        max_(max),
+        nd_(mean, noise_sigma),
+        var_nor_(rng_, nd_)
 {
-public:
-  SensorMap(std::string service_name);
+  if (use_map)
+  {
+    sensor_map_.reset(new SensorMap("/map_" + id + "/static_map"));
+    sensor_msg_.hardware_id = id;
+    sensor_msg_.name = description;
+  }
+}
 
-  /**
-   * Returns gradient value at (x,y), where x and y are
-   * coordinates in map's frame.
-   * @param x in meters
-   * @param y in meters
-   * @return Gradient value between 0 and 255, 0 if outside the map.
-   */
-  int getValueAt(double x, double y);
-private:
-  ros::NodeHandle nh_;
-  nav_msgs::OccupancyGrid map_;
+SensorStatus & Sensor::getValueAt(double x, double y)
+{
+  // Get initial value
+  if (sensor_map_)
+  {
+    sensor_msg_.value = sensor_map_->getValueAt(x, y);
+    // Adjust according to max/min
+    sensor_msg_.value = sensor_msg_.value / 255.0 * (max_ - min_) + min_;
+    // apply noise
+    sensor_msg_.value += var_nor_() - nd_.mean();
+  }
+  else
+  {
+    sensor_msg_.value = var_nor_();
 
-};
+  }
 
-} /* namespace woz_simulated_sensors*/
-#endif /* SENSOR_MAP_H_ */
+  // Set warning if value is 10% higher than normal.
+  if (sensor_msg_.value > nd_.mean() * 1.1)
+  {
+    sensor_msg_.level = SensorStatus::WARN;
+  }
+  else
+  {
+    sensor_msg_.level = SensorStatus::OK;
+  }
+
+  // check limits
+  if (sensor_msg_.value < min_)
+  {
+    sensor_msg_.value = min_;
+  }
+  else if (sensor_msg_.value > max_)
+  {
+    sensor_msg_.value = max_;
+  }
+
+  return sensor_msg_;
+}
+
+} /* namespace woz_simulated_sensors */

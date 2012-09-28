@@ -33,7 +33,7 @@
 
 #include <nav_msgs/GetMap.h>
 
-namespace simulated_sensors{
+namespace woz_simulated_sensors{
 
 
 SensorMap::SensorMap(std::string service_name)
@@ -72,4 +72,4 @@ int SensorMap::getValueAt(double x, double y)
 }
 
 
-} /* namespace simulated_sensors */
+} /* namespace woz_simulated_sensors */

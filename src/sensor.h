@@ -29,35 +29,60 @@
 
 /* Author: Mikhail Medvedev */
 
-#ifndef SENSOR_MAP_H_
-#define SENSOR_MAP_H_
+#ifndef SENSOR_H_
+#define SENSOR_H_
 
-#include <ros/ros.h>
-#include <nav_msgs/OccupancyGrid.h>
+#include "sensor_map.h"
+
+#include <boost/random.hpp>
+#include <boost/random/normal_distribution.hpp>
+
+#include <woz_simulated_sensors/SensorStatus.h>
+
 
 namespace woz_simulated_sensors
 {
-/**
- * Manages single sensory gradient map.
+
+/*
+ *
  */
-class SensorMap
+class Sensor
 {
 public:
-  SensorMap(std::string service_name);
+  /**
+   *
+   * @param id Identification string, used in message naming and map lookup.
+   * @param description Human readable description.
+   * @param min Minimum value
+   * @param max Maximum value
+   * @param mean Normal reading value
+   * @param noise_sigma Gussian noise sigma, 0 - no noise
+   * @param use_map True to load the initial map, if map is used, mean discarded.
+   */
+  Sensor(const std::string& id, const std::string & description, double min,
+         double max, double mean, double sigma, bool use_map = false);
 
   /**
-   * Returns gradient value at (x,y), where x and y are
-   * coordinates in map's frame.
-   * @param x in meters
-   * @param y in meters
-   * @return Gradient value between 0 and 255, 0 if outside the map.
+   * Produce the simulated sensor value at (x, y);
+   * @param x
+   * @param y
+   * @return
    */
-  int getValueAt(double x, double y);
+  SensorStatus & getValueAt(double x, double y);
 private:
-  ros::NodeHandle nh_;
-  nav_msgs::OccupancyGrid map_;
+  SensorStatus sensor_msg_;
+  std::string id_;
+  std::string description_;
+  double min_;
+  double max_;
+  boost::shared_ptr<SensorMap> sensor_map_;
+
+  boost::mt19937 rng_;
+  boost::normal_distribution<> nd_;
+  boost::variate_generator<boost::mt19937&, boost::normal_distribution<> > var_nor_;
+
 
 };
 
-} /* namespace woz_simulated_sensors*/
-#endif /* SENSOR_MAP_H_ */
+} /* namespace woz_simulated_sensors */
+#endif /* SENSOR_H_ */
