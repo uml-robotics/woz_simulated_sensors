@@ -4,7 +4,6 @@
 #include <geometry_msgs/PoseStamped.h>
 
 #include "sensor.h"
-#include <woz_msgs/Sensors.h>
 #include <woz_simulated_sensors/SensorArray.h>
 
 namespace woz_simulated_sensors
