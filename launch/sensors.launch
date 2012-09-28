@@ -3,4 +3,27 @@
     <remap from="map" to="/sensor_maps/co2"/>
     <remap from="static_map" to="/map_co2/static_map"/>
   </node>
+
+  <node name="map_o2" pkg="gradient_map_server" type="map_server" args="$(find woz_sensor_maps)/3rdfloor_10cm_co2.yaml">
+    <remap from="map" to="/sensor_maps/o2"/>
+    <remap from="static_map" to="/map_o2/static_map"/>
+  </node>
+
+  <node name="map_temperature" pkg="gradient_map_server" type="map_server" args="$(find woz_sensor_maps)/3rdfloor_10cm_co2.yaml">
+    <remap from="map" to="/sensor_maps/temperature"/>
+    <remap from="static_map" to="/map_temperature/static_map"/>
+  </node>
+
+  <node name="map_ion_rad" pkg="gradient_map_server" type="map_server" args="$(find woz_sensor_maps)/3rdfloor_10cm_co2.yaml">
+    <remap from="map" to="/sensor_maps/ion_rad"/>
+    <remap from="static_map" to="/map_ion_rad/static_map"/>
+  </node>
+
+  <node name="map_person" pkg="gradient_map_server" type="map_server" args="$(find woz_sensor_maps)/3rdfloor_10cm_co2.yaml">
+    <remap from="map" to="/sensor_maps/person"/>
+    <remap from="static_map" to="/map_person/static_map"/>
+  </node>
+
+  <node name="simulated_sensors" pkg="woz_simulated_sensors" type="sensors" output="screen"/>
+
 </launch>

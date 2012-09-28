@@ -4,6 +4,7 @@
 #include <geometry_msgs/PoseStamped.h>
 
 #include "sensor_map.h"
+#include <woz_msgs/Sensors.h>
 
 namespace simulated_sensors
 {
@@ -15,7 +16,11 @@ public:
   void update();
 
 private:
-  SensorMap sensor_map_;
+  SensorMap sensor_map_co2;
+  SensorMap sensor_map_o2;
+  SensorMap sensor_map_temperature;
+  SensorMap sensor_map_ion_rad;
+  SensorMap sensor_map_person;
 
   // ROS
   ros::NodeHandle nh_;
@@ -23,6 +28,7 @@ private:
   geometry_msgs::PoseStamped zero_pose_;
   std::string base_frame_id_;
   std::string map_frame_id_;
+  ros::Publisher sensors_pub_;
 };
 
 } // namespace simulated_sensors
@@ -44,7 +50,11 @@ int main(int argc, char **argv)
 namespace simulated_sensors
 {
 Sensors::Sensors() :
-        sensor_map_("map_co2/static_map")
+        sensor_map_co2("map_co2/static_map"),
+        sensor_map_o2("map_o2/static_map"),
+        sensor_map_temperature("map_temperature/static_map"),
+        sensor_map_ion_rad("map_ion_rad/static_map"),
+        sensor_map_person("map_person/static_map")
 {
 
   nh_.param("base_frame_id", base_frame_id_, (std::string)"/base_link");
@@ -59,6 +69,8 @@ Sensors::Sensors() :
         "Waiting for transform "<<map_frame_id_<<"->"<<base_frame_id_<<".");
   }
   ROS_INFO("Transform ok.");
+
+  sensors_pub_ = nh_.advertise<woz_msgs::Sensors>("sensors", 1);
 }
 
 void Sensors::update()
@@ -77,11 +89,17 @@ void Sensors::update()
     return;
   }
 
-  double &map_x = map_pose.pose.position.x;
-  double &map_y = map_pose.pose.position.y;
+  double &x = map_pose.pose.position.x;
+  double &y = map_pose.pose.position.y;
 
-  ROS_INFO_STREAM(" = "<<sensor_map_.getValueAt(map_x, map_y));
+  woz_msgs::Sensors msg;
+  msg.co2 = sensor_map_co2.getValueAt(x, y);
+  msg.o2 = sensor_map_o2.getValueAt(x, y);
+  msg.temperature = sensor_map_temperature.getValueAt(x, y);
+  msg.ion_rad = sensor_map_ion_rad.getValueAt(x, y);
+  msg.person = sensor_map_person.getValueAt(x, y);
 
+  sensors_pub_.publish(msg);
 }
 
 } // namespace simulated_sensors

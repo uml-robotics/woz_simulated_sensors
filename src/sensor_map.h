@@ -50,7 +50,7 @@ public:
    * coordinates in map's frame.
    * @param x in meters
    * @param y in meters
-   * @return Gradient value between 0 and 255, negative if outside the map.
+   * @return Gradient value between 0 and 255, 0 if outside the map.
    */
   int getValueAt(double x, double y);
 private:

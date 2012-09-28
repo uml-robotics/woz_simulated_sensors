@@ -63,7 +63,7 @@ int SensorMap::getValueAt(double x, double y)
   if (px < 0 || py < 0 || px > (int)map_.info.width
       || py > (int)map_.info.height)
   {
-    return -1;
+    return 0;
   }
   else
   {
