@@ -47,6 +47,10 @@ Sensor::Sensor(const std::string& id, const std::string& description,
 {
   sensor_msg_.hardware_id = id;
   sensor_msg_.name = description;
+  sensor_msg_.min = min;
+  sensor_msg_.max = max;
+  sensor_msg_.nominal = mean;
+
   if (use_map)
   {
     std::string map_service("/map_" + id + "/static_map");

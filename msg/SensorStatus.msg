@@ -11,3 +11,6 @@ string name # a description of the test/component reporting
 string message # a description of the status
 string hardware_id # a hardware unique string
 float32 value # Value associated with the status
+float32 min
+float32 max
+float32 nominal
