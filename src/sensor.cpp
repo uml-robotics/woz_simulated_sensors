@@ -42,11 +42,18 @@ Sensor::Sensor(const std::string& id, const std::string& description,
         nd_(mean, noise_sigma),
         var_nor_(rng_, nd_)
 {
+  sensor_msg_.hardware_id = id;
+  sensor_msg_.name = description;
   if (use_map)
   {
-    sensor_map_.reset(new SensorMap("/map_" + id + "/static_map"));
-    sensor_msg_.hardware_id = id;
-    sensor_msg_.name = description;
+    std::string map_service("/map_" + id + "/static_map");
+    sensor_map_.reset(new SensorMap(map_service));
+    ROS_INFO_STREAM("Sensor: "<< description <<" using "<< map_service);
+  }
+  else
+  {
+    ROS_INFO_STREAM(
+        "Sensor: "<< description <<" using value "<< mean<<" (sigma "<< noise_sigma<<")");
   }
 }
 
