@@ -9,7 +9,7 @@
     <remap from="static_map" to="/map_o2/static_map"/>
   </node>
 
-  <node name="map_temperature" pkg="gradient_map_server" type="map_server" args="$(find woz_sensor_maps)/3rdfloor_10cm_co2.yaml">
+  <node name="map_temperature" pkg="gradient_map_server" type="map_server" args="$(find woz_sensor_maps)/3rdfloor_10cm_temperature.yaml">
     <remap from="map" to="/sensor_maps/temperature"/>
     <remap from="static_map" to="/map_temperature/static_map"/>
   </node>
