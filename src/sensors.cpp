@@ -59,17 +59,19 @@ namespace woz_simulated_sensors
 {
 Sensors::Sensors() :
         // NeutronRAE-II
-        sensor_rad_neutron_gamma("neutron_gamma", "Gamma / Neutron, cpm", 0, 100,
-                                  40 / 60, 0.3), // count per second (cps)
+        sensor_rad_neutron_gamma("neutron_gamma", "Gamma / Neutron, cpm", 0,
+                                 100, 40 / 60, 0.3),
         sensor_temperature("temperature", "Ambient Temperature, F", 0, 100, 71,
                            0.5, true), // F
 
         // MultiRAE Pro
         sensor_rad_gamma("gamma", "Gamma, uREM/h", 0, 20000, 34, 0.5),
-        sensor_co2("co2", "Carbon Dioxide, ppm", 0, 50000, 500, 30, true), // parts per million
+        sensor_co2("co2", "Carbon Dioxide, ppm", 0, 50000, 500, 30),
         sensor_electrochem("electrochem", "Ammonia, ppm", 0, 100, 1, 0.1, true),
         sensor_combust_gases("combust_gases", "Methane, ppm", 0, 100, 1, 0.1),
-        sensor_volatile_organic("volatile_organic", "Paints, Cleaning Supplies, ppm", 0,100, 1, 0.5),
+        sensor_volatile_organic("volatile_organic",
+                                "Paints, Cleaning Supplies, ppm", 0, 100, 1,
+                                0.5),
 
         // Heartbeat
         sensor_heartbeat("heartbeat", "Heartbeat radar", 0, 100, 2, 1, true)
@@ -84,46 +86,46 @@ Sensors::Sensors() :
                                         ros::Time::now(), ros::Duration(1.0)))
   {
     ROS_INFO_STREAM(
-    "Waiting for transform "<<map_frame_id_<<"->"<<base_frame_id_<<".");
-}
+        "Waiting for transform "<<map_frame_id_<<"->"<<base_frame_id_<<".");
+  }
   ROS_INFO("Transform ok.");
 
-sensors_pub_ = nh_.advertise<woz_simulated_sensors::SensorArray>("sensors",
-    1);
+  sensors_pub_ = nh_.advertise<woz_simulated_sensors::SensorArray>("sensors",
+                                                                   1);
 }
 
 void Sensors::update()
 {
-zero_pose_.header.stamp = ros::Time::now();
-geometry_msgs::PoseStamped map_pose;
-try
-{
-  tf_listener_.waitForTransform(map_frame_id_, base_frame_id_, ros::Time::now(),
-                                ros::Duration(0.5));
-  tf_listener_.transformPose(map_frame_id_, zero_pose_, map_pose);
-}
-catch (tf::TransformException &ex)
-{
-  ROS_ERROR("%s", ex.what());
-  return;
-}
+  zero_pose_.header.stamp = ros::Time::now();
+  geometry_msgs::PoseStamped map_pose;
+  try
+  {
+    tf_listener_.waitForTransform(map_frame_id_, base_frame_id_,
+                                  ros::Time::now(), ros::Duration(0.5));
+    tf_listener_.transformPose(map_frame_id_, zero_pose_, map_pose);
+  }
+  catch (tf::TransformException &ex)
+  {
+    ROS_ERROR("%s", ex.what());
+    return;
+  }
 
-double &x = map_pose.pose.position.x;
-double &y = map_pose.pose.position.y;
+  double &x = map_pose.pose.position.x;
+  double &y = map_pose.pose.position.y;
 
-SensorArray msg;
+  SensorArray msg;
 
-msg.header.stamp = ros::Time::now();
-msg.sensors.push_back(sensor_rad_neutron_gamma.getValueAt(x, y));
-msg.sensors.push_back(sensor_temperature.getValueAt(x, y));
-msg.sensors.push_back(sensor_rad_gamma.getValueAt(x, y));
-msg.sensors.push_back(sensor_co2.getValueAt(x, y));
-msg.sensors.push_back(sensor_electrochem.getValueAt(x, y));
-msg.sensors.push_back(sensor_combust_gases.getValueAt(x, y));
-msg.sensors.push_back(sensor_volatile_organic.getValueAt(x, y));
-msg.sensors.push_back(sensor_heartbeat.getValueAt(x, y));
+  msg.header.stamp = ros::Time::now();
+  msg.sensors.push_back(sensor_rad_neutron_gamma.getValueAt(x, y));
+  msg.sensors.push_back(sensor_temperature.getValueAt(x, y));
+  msg.sensors.push_back(sensor_rad_gamma.getValueAt(x, y));
+  msg.sensors.push_back(sensor_co2.getValueAt(x, y));
+  msg.sensors.push_back(sensor_electrochem.getValueAt(x, y));
+  msg.sensors.push_back(sensor_combust_gases.getValueAt(x, y));
+  msg.sensors.push_back(sensor_volatile_organic.getValueAt(x, y));
+  msg.sensors.push_back(sensor_heartbeat.getValueAt(x, y));
 
-sensors_pub_.publish(msg);
+  sensors_pub_.publish(msg);
 }
 
 } // namespace woz_simulated_sensors
