@@ -81,6 +81,7 @@ private:
   boost::normal_distribution<> nd_;
   boost::variate_generator<boost::mt19937&, boost::normal_distribution<> > var_nor_;
 
+  static int seed;
 
 };
 

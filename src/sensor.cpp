@@ -34,11 +34,14 @@
 namespace woz_simulated_sensors
 {
 
+int Sensor::seed = clock();
+
 Sensor::Sensor(const std::string& id, const std::string& description,
                double min, double max, double mean, double noise_sigma,
                bool use_map) :
         min_(min),
         max_(max),
+        rng_(static_cast<unsigned int>(std::clock()) + (seed *= 13 * seed)),
         nd_(mean, noise_sigma),
         var_nor_(rng_, nd_)
 {
