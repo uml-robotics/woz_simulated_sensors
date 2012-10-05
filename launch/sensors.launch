@@ -27,4 +27,12 @@
       <remap from="static_map" to="/map_$(arg map_name)/static_map"/>
     </node>
   </group>
+
+  <group>
+    <arg name="map_name" value="locations"/>
+    <node name="map_$(arg map_name)" pkg="gradient_map_server" type="map_server" args="$(find woz_sensor_maps)/3rdfloor_10cm_$(arg map_name).yaml" machine="driver">
+      <remap from="map" to="/sensor_maps/$(arg map_name)"/>
+      <remap from="static_map" to="/map_$(arg map_name)/static_map"/>
+    </node>
+  </group>
 </launch>

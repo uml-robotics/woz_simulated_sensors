@@ -4,6 +4,7 @@
 #include <geometry_msgs/PoseStamped.h>
 
 #include "sensor.h"
+#include "location_sensor.h"
 #include <woz_simulated_sensors/SensorArray.h>
 
 namespace woz_simulated_sensors
@@ -29,6 +30,9 @@ private:
 
   // Heartbeat
   Sensor sensor_heartbeat;
+
+  // Location Sensor
+  LocationSensor sensor_locations;
 
   // ROS
   ros::NodeHandle nh_;
@@ -74,7 +78,33 @@ Sensors::Sensors() :
                                 0.5),
 
         // Heartbeat
-        sensor_heartbeat("heartbeat", "Heartbeat radar", 0, 100, 70, 5, true)
+        sensor_heartbeat("heartbeat", "Heartbeat Sensor", 0, 100, 70, 5, true),
+        sensor_locations("locations", "Location Sensor", 0, 100, 70, 0, true, {
+            {0, "Uninitialized"}, //
+            {11, "Engineering"}, //
+            {13, "Engineering by Hallway"}, //
+            {28, "South Wing by Engineering"}, //
+            {29, "South Wing between Engineering and Research Lab"}, //
+            {31, "South Wing"}, //
+            {22, "South Wing by Research"}, //
+            {32, "South Wing by South Entrance"}, //
+            {35, "South Wing by Cafeteria"}, //
+            {19, "Research Lab"}, //
+            {21, "Research Lab by Hallway"}, //
+            {38, "Cafeteria by SW"}, //
+            {36, "Cafeteria by Elevators"}, //
+            {34, "Cafeteria by NW"}, //
+            {33, "Cafeteria"}, //
+            {46, "Control Room"}, //
+            {47, "Control Room by Hallway"}, //
+            {41, "North Wing by Cafeteria"}, //
+            {44, "North Wing between Control Room and Conference Room"}, //
+            {40, "North Wing"}, //
+            {42, "North Wing by North Entrance"}, //
+            {43, "North Wing by Conference Room"}, //
+            {56, "Conference Room"}, //
+            {57, "Conference Room by Hallway"}, //
+                         })
 {
 
   nh_.param("base_frame_id", base_frame_id_, (std::string)"/base_link");
@@ -124,6 +154,7 @@ void Sensors::update()
   msg.sensors.push_back(sensor_combust_gases.getValueAt(x, y));
   msg.sensors.push_back(sensor_volatile_organic.getValueAt(x, y));
   msg.sensors.push_back(sensor_heartbeat.getValueAt(x, y));
+  msg.sensors.push_back(sensor_locations.getValueAt(x, y));
 
   sensors_pub_.publish(msg);
 }
