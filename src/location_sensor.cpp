@@ -29,61 +29,41 @@
 
 /* Author: Mikhail Medvedev */
 
-#ifndef SENSOR_H_
-#define SENSOR_H_
-
-#include "sensor_map.h"
-
-#include <boost/random.hpp>
-#include <boost/random/normal_distribution.hpp>
-
-#include <woz_simulated_sensors/SensorStatus.h>
-
+#include "location_sensor.h"
 
 namespace woz_simulated_sensors
 {
 
-/*
- *
- */
-class Sensor
+void LocationSensor::setMapping(
+    const std::map<int, std::string>& location_mapping)
 {
-public:
-  /**
-   *
-   * @param id Identification string, used in message naming and map lookup.
-   * @param description Human readable description.
-   * @param min Minimum value
-   * @param max Maximum value
-   * @param mean Normal reading value
-   * @param noise_sigma Gussian noise sigma, 0 - no noise
-   * @param use_map True to load the initial map, if map is used, mean discarded.
-   */
-  Sensor(const std::string& id, const std::string & description, double min,
-         double max, double mean, double sigma, bool use_map = false);
+  location_mapping_ = location_mapping;
+}
 
-  /**
-   * Produce the simulated sensor value at (x, y);
-   * @param x
-   * @param y
-   * @return
-   */
-  SensorStatus getValueAt(double x, double y);
-private:
-  SensorStatus sensor_msg_;
-  std::string id_;
-  std::string description_;
-  double min_;
-  double max_;
-  boost::shared_ptr<SensorMap> sensor_map_;
+LocationSensor::LocationSensor(
+    const std::string& id, const std::string& description, double min,
+    double max, double mean, double sigma, bool use_map,
+    const std::map<int, std::string>location_mapping) :
+        Sensor(id, description, min, max, mean, sigma, use_map)
+{
+  location_mapping_ = location_mapping;
+}
 
-  boost::mt19937 rng_;
-  boost::normal_distribution<> nd_;
-  boost::variate_generator<boost::mt19937&, boost::normal_distribution<> > var_nor_;
-
-  static int seed;
-
-};
+SensorStatus LocationSensor::getValueAt(double x, double y)
+{
+  SensorStatus status = Sensor::getValueAt(x, y);
+  // Truncate value to int
+  status.value =(int)status.value;
+  auto location = location_mapping_.find((int)status.value);
+  if (location != location_mapping_.end())
+  {
+    status.message = location_mapping_[(int)status.value];
+  }
+  else
+  {
+    status.message = "Unknown Location";
+  }
+  return status;
+}
 
 } /* namespace woz_simulated_sensors */
-#endif /* SENSOR_H_ */

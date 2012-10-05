@@ -29,16 +29,11 @@
 
 /* Author: Mikhail Medvedev */
 
-#ifndef SENSOR_H_
-#define SENSOR_H_
+#ifndef LOCATION_SENSOR_H_
+#define LOCATION_SENSOR_H_
 
-#include "sensor_map.h"
-
-#include <boost/random.hpp>
-#include <boost/random/normal_distribution.hpp>
-
-#include <woz_simulated_sensors/SensorStatus.h>
-
+#include "sensor.h"
+#include <map>
 
 namespace woz_simulated_sensors
 {
@@ -46,44 +41,19 @@ namespace woz_simulated_sensors
 /*
  *
  */
-class Sensor
+class LocationSensor : public Sensor
 {
 public:
-  /**
-   *
-   * @param id Identification string, used in message naming and map lookup.
-   * @param description Human readable description.
-   * @param min Minimum value
-   * @param max Maximum value
-   * @param mean Normal reading value
-   * @param noise_sigma Gussian noise sigma, 0 - no noise
-   * @param use_map True to load the initial map, if map is used, mean discarded.
-   */
-  Sensor(const std::string& id, const std::string & description, double min,
-         double max, double mean, double sigma, bool use_map = false);
+  LocationSensor(const std::string& id, const std::string & description,
+                 double min, double max, double mean, double sigma,
+                 bool use_map ,
+                 const std::map<int, std::string> location_mapping);
 
-  /**
-   * Produce the simulated sensor value at (x, y);
-   * @param x
-   * @param y
-   * @return
-   */
+  void setMapping(const std::map<int, std::string>& location_mpping);
   SensorStatus getValueAt(double x, double y);
 private:
-  SensorStatus sensor_msg_;
-  std::string id_;
-  std::string description_;
-  double min_;
-  double max_;
-  boost::shared_ptr<SensorMap> sensor_map_;
-
-  boost::mt19937 rng_;
-  boost::normal_distribution<> nd_;
-  boost::variate_generator<boost::mt19937&, boost::normal_distribution<> > var_nor_;
-
-  static int seed;
-
+  std::map<int, std::string>  location_mapping_;
 };
 
 } /* namespace woz_simulated_sensors */
-#endif /* SENSOR_H_ */
+#endif /* LOCATION_SENSOR_H_ */

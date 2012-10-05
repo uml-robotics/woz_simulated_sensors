@@ -64,7 +64,7 @@ Sensor::Sensor(const std::string& id, const std::string& description,
   }
 }
 
-SensorStatus & Sensor::getValueAt(double x, double y)
+SensorStatus Sensor::getValueAt(double x, double y)
 {
   // Get initial value
   if (sensor_map_)

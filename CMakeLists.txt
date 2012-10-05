@@ -11,6 +11,13 @@ include($ENV{ROS_ROOT}/core/rosbuild/rosbuild.cmake)
 
 rosbuild_init()
 
+## Compiler flags
+if(CMAKE_COMPILER_IS_GNUCXX)
+    set(CMAKE_CXX_FLAGS "-std=c++0x")      
+    #set(CMAKE_CXX_FLAGS "-O2")        ## Optimize
+    #set(CMAKE_EXE_LINKER_FLAGS "-s")  ## Strip binary
+endif()
+
 #set the default path for built executables to the "bin" directory
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
 #set the default path for built libraries to the "lib" directory
@@ -25,6 +32,7 @@ rosbuild_genmsg()
 rosbuild_add_library(${PROJECT_NAME}
   src/sensor_map.cpp
   src/sensor.cpp
+  src/location_sensor.cpp
   )
 #target_link_libraries(${PROJECT_NAME} another_library)
 #rosbuild_add_boost_directories()
