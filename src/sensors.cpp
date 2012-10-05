@@ -74,7 +74,7 @@ Sensors::Sensors() :
                                 0.5),
 
         // Heartbeat
-        sensor_heartbeat("heartbeat", "Heartbeat radar", 0, 100, 2, 1, true)
+        sensor_heartbeat("heartbeat", "Heartbeat radar", 0, 100, 70, 5, true)
 {
 
   nh_.param("base_frame_id", base_frame_id_, (std::string)"/base_link");
