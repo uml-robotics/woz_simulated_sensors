@@ -29,63 +29,48 @@
 
 /* Author: Mikhail Medvedev */
 
-#ifndef SENSOR_H_
-#define SENSOR_H_
-
-#include "sensor_map.h"
-
-#include <boost/random.hpp>
-#include <boost/random/normal_distribution.hpp>
-
-#include <woz_simulated_sensors/SensorStatus.h>
-
+#include "battery_sensor.h"
 
 namespace woz_simulated_sensors
 {
 
-/*
- *
- */
-class Sensor
+BatterySensor::BatterySensor(const std::string& id,
+                             const std::string& description, double min,
+                             double max, double mean, double sigma,
+                             bool use_map) :
+        Sensor(id, description, min, max, mean, sigma, use_map),
+        initial_level_(mean),
+        time_till_discharge_(30 * 60), // 30 minutes
+        sub_clock_(nh_.subscribe("/RunClock", 5, &BatterySensor::clockCb, this))
 {
-public:
-  /**
-   *
-   * @param id Identification string, used in message naming and map lookup.
-   * @param description Human readable description.
-   * @param min Minimum value
-   * @param max Maximum value
-   * @param mean Normal reading value
-   * @param noise_sigma Gussian noise sigma, 0 - no noise
-   * @param use_map True to load the initial map, if map is used, mean discarded.
-   */
-  Sensor(const std::string& id, const std::string & description, double min,
-         double max, double mean, double sigma, bool use_map = false);
+}
 
-  void updateDistribution(double mean);
-  void updateDistribution(double mean, double sigma);
-  /**
-   * Produce the simulated sensor value at (x, y);
-   * @param x
-   * @param y
-   * @return
-   */
-  SensorStatus getValueAt(double x, double y);
-protected:
-  SensorStatus sensor_msg_;
-  std::string id_;
-  std::string description_;
-  double min_;
-  double max_;
-  boost::shared_ptr<SensorMap> sensor_map_;
+void BatterySensor::clockCb(const std_msgs::DurationConstPtr& msg)
+{
+  current_duration_ = msg->data;
 
-  boost::mt19937 rng_;
-  boost::normal_distribution<> nd_;
-  boost::variate_generator<boost::mt19937&, boost::normal_distribution<> > var_nor_;
+  ros::Duration elapsed_sinse_charge = current_duration_ - time_charged_;
+  double a = elapsed_sinse_charge.toSec() / time_till_discharge_.toSec();
+  updateDistribution(initial_level_ - (initial_level_ - min_) * a);
+}
 
-  static int seed;
+SensorStatus BatterySensor::getValueAt(double x, double y)
+{
+  SensorStatus status = Sensor::getValueAt(x, y);
+  // Update the message so that warn level is only when the value close to min
+  if (status.value < status.min * 1.1)
+  {
+    status.level = status.WARN;
+  }
+  else
+  {
+    status.level = status.OK;
+  }
+  return status;
+}
 
-};
-
+void BatterySensor::rechargeBattery()
+{
+  sensor_msg_.nominal = initial_level_;
+}
 } /* namespace woz_simulated_sensors */
-#endif /* SENSOR_H_ */

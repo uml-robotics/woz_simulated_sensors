@@ -5,6 +5,7 @@
 
 #include "sensor.h"
 #include "location_sensor.h"
+#include "battery_sensor.h"
 #include <woz_simulated_sensors/SensorArray.h>
 
 namespace woz_simulated_sensors
@@ -33,6 +34,9 @@ private:
 
   // Location Sensor
   LocationSensor sensor_locations;
+
+  // Fake Battery Sensor
+  BatterySensor sensor_battery;
 
   // ROS
   ros::NodeHandle nh_;
@@ -65,7 +69,7 @@ Sensors::Sensors() :
         // NeutronRAE-II
         sensor_rad_neutron_gamma("neutron_gamma", "Gamma / Neutron, cpm", 0,
                                  100, 40 / 60, 0.3),
-        sensor_temperature("temperature", "Ambient Temperature, F", 0, 100, 71,
+        sensor_temperature("temperature", "Ambient Temp., F", 0, 100, 71,
                            0.5, true), // F
 
         // MultiRAE Pro
@@ -74,12 +78,12 @@ Sensors::Sensors() :
         sensor_electrochem("electrochem", "Ammonia, ppm", 0, 100, 1, 0.1, true),
         sensor_combust_gases("combust_gases", "Methane, ppm", 0, 100, 1, 0.1),
         sensor_volatile_organic("volatile_organic",
-                                "Paints, Cleaning Supplies, ppm", 0, 100, 1,
+                                "Cleaning Chem, ppm", 0, 100, 1,
                                 0.5),
 
         // Heartbeat
-        sensor_heartbeat("heartbeat", "Heartbeat Sensor", 0, 100, 70, 5, true),
-        sensor_locations("locations", "Location Sensor", 0, 100, 70, 0, true, {
+        sensor_heartbeat("heartbeat", "Heartbeat, bpm", 0, 100, 70, 5, true),
+        sensor_locations("locations", "Location", 0, 100, 70, 0, true, {
             {0, "Uninitialized"}, //
             {11, "Engineering"}, //
             {13, "Engineering by Hallway"}, //
@@ -104,7 +108,9 @@ Sensors::Sensors() :
             {43, "North Wing by Conference Room"}, //
             {56, "Conference Room"}, //
             {57, "Conference Room by Hallway"}, //
-                         })
+                         }),
+        sensor_battery("battery", "Battery, V", 20, 31, 29, 0.3)
+
 {
 
   nh_.param("base_frame_id", base_frame_id_, (std::string)"/base_link");
@@ -146,15 +152,19 @@ void Sensors::update()
   SensorArray msg;
 
   msg.header.stamp = ros::Time::now();
-  msg.sensors.push_back(sensor_rad_neutron_gamma.getValueAt(x, y));
-  msg.sensors.push_back(sensor_temperature.getValueAt(x, y));
-  msg.sensors.push_back(sensor_rad_gamma.getValueAt(x, y));
-  msg.sensors.push_back(sensor_co2.getValueAt(x, y));
-  msg.sensors.push_back(sensor_electrochem.getValueAt(x, y));
-  msg.sensors.push_back(sensor_combust_gases.getValueAt(x, y));
-  msg.sensors.push_back(sensor_volatile_organic.getValueAt(x, y));
-  msg.sensors.push_back(sensor_heartbeat.getValueAt(x, y));
-  msg.sensors.push_back(sensor_locations.getValueAt(x, y));
+  msg.sensors =
+  {
+    sensor_rad_neutron_gamma.getValueAt(x, y),
+    sensor_temperature.getValueAt(x, y),
+    sensor_rad_gamma.getValueAt(x, y),
+    sensor_co2.getValueAt(x, y),
+    sensor_electrochem.getValueAt(x, y),
+    sensor_combust_gases.getValueAt(x, y),
+    sensor_volatile_organic.getValueAt(x, y),
+    sensor_heartbeat.getValueAt(x, y),
+    sensor_locations.getValueAt(x, y)
+    , sensor_battery.getValueAt(x, y)
+  };
 
   sensors_pub_.publish(msg);
 }

@@ -29,63 +29,41 @@
 
 /* Author: Mikhail Medvedev */
 
-#ifndef SENSOR_H_
-#define SENSOR_H_
+#ifndef BATTERY_SENSOR_H_
+#define BATTERY_SENSOR_H_
 
-#include "sensor_map.h"
-
-#include <boost/random.hpp>
-#include <boost/random/normal_distribution.hpp>
-
-#include <woz_simulated_sensors/SensorStatus.h>
-
+#include "sensor.h"
+#include <ros/ros.h>
+#include <std_msgs/Duration.h>
 
 namespace woz_simulated_sensors
 {
 
 /*
- *
+ * Subscribes to /RunClock  (Duration) and simulated battery decay with
+ * time based on the clock.
  */
-class Sensor
+class BatterySensor : public Sensor
 {
 public:
-  /**
-   *
-   * @param id Identification string, used in message naming and map lookup.
-   * @param description Human readable description.
-   * @param min Minimum value
-   * @param max Maximum value
-   * @param mean Normal reading value
-   * @param noise_sigma Gussian noise sigma, 0 - no noise
-   * @param use_map True to load the initial map, if map is used, mean discarded.
-   */
-  Sensor(const std::string& id, const std::string & description, double min,
-         double max, double mean, double sigma, bool use_map = false);
+  BatterySensor(const std::string& id, const std::string & description,
+                double min, double max, double mean, double sigma,
+                bool use_map = false);
+  void rechargeBattery();
 
-  void updateDistribution(double mean);
-  void updateDistribution(double mean, double sigma);
-  /**
-   * Produce the simulated sensor value at (x, y);
-   * @param x
-   * @param y
-   * @return
-   */
   SensorStatus getValueAt(double x, double y);
-protected:
-  SensorStatus sensor_msg_;
-  std::string id_;
-  std::string description_;
-  double min_;
-  double max_;
-  boost::shared_ptr<SensorMap> sensor_map_;
 
-  boost::mt19937 rng_;
-  boost::normal_distribution<> nd_;
-  boost::variate_generator<boost::mt19937&, boost::normal_distribution<> > var_nor_;
+private:
+  float initial_level_;
+  ros::Duration time_charged_;
+  ros::Duration time_till_discharge_; //< How long it takes to get to minimal batt level.
 
-  static int seed;
+  ros::NodeHandle nh_;
+  ros::Subscriber sub_clock_;
+  ros::Duration current_duration_;
 
+  void clockCb(const std_msgs::DurationConstPtr & msg);
 };
 
 } /* namespace woz_simulated_sensors */
-#endif /* SENSOR_H_ */
+#endif /* BATTERY_SENSOR_H_ */

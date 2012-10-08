@@ -33,6 +33,7 @@ rosbuild_add_library(${PROJECT_NAME}
   src/sensor_map.cpp
   src/sensor.cpp
   src/location_sensor.cpp
+  src/battery_sensor.cpp
   )
 #target_link_libraries(${PROJECT_NAME} another_library)
 #rosbuild_add_boost_directories()

@@ -51,6 +51,8 @@ Sensor::Sensor(const std::string& id, const std::string& description,
   sensor_msg_.max = max;
   sensor_msg_.nominal = mean;
 
+//  updateDistribution(mean, noise_sigma);
+
   if (use_map)
   {
     std::string map_service("/map_" + id + "/static_map");
@@ -62,6 +64,17 @@ Sensor::Sensor(const std::string& id, const std::string& description,
     ROS_INFO_STREAM(
         "Sensor: "<< description <<" using value "<< mean<<" (sigma "<< noise_sigma<<")");
   }
+}
+
+void Sensor::updateDistribution(double mean)
+{
+  updateDistribution(mean, nd_.sigma());
+}
+
+void Sensor::updateDistribution(double mean, double sigma)
+{
+  nd_ = boost::normal_distribution<>(mean, sigma);
+  var_nor_.distribution() = nd_;
 }
 
 SensorStatus Sensor::getValueAt(double x, double y)
