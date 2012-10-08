@@ -40,7 +40,7 @@ BatterySensor::BatterySensor(const std::string& id,
                              bool use_map) :
         Sensor(id, description, min, max, mean, sigma, use_map),
         initial_level_(mean),
-        time_till_discharge_(30 * 60), // 30 minutes
+        time_till_discharge_(45 * 60), // 45 minutes
         sub_clock_(nh_.subscribe("/RunClock", 5, &BatterySensor::clockCb, this))
 {
 }
