@@ -68,23 +68,22 @@ namespace woz_simulated_sensors
 Sensors::Sensors() :
         // NeutronRAE-II
         sensor_rad_neutron_gamma("neutron_gamma", "Gamma / Neutron, cpm", 0,
-                                 100, 40 / 60, 0.3),
-        sensor_temperature("temperature", "Ambient Temp., F", 0, 100, 71,
-                           0.5, true), // F
+                                 100, 40 / 60.0, 0.02),
+        sensor_temperature("temperature", "Ambient Temp., F", 0, 100, 71, 0.5,
+                           true), // F
 
         // MultiRAE Pro
         sensor_rad_gamma("gamma", "Gamma, uREM/h", 0, 20000, 34, 0.5),
-        sensor_co2("co2", "Carbon Dioxide, ppm", 0, 50000, 500, 30),
+        sensor_co2("co2", "Carbon Dioxide, ppm", 0, 50000, 500, 10),
         sensor_electrochem("electrochem", "Ammonia, ppm", 0, 100, 1, 0.1, true),
-        sensor_combust_gases("combust_gases", "Methane, ppm", 0, 100, 1, 0.1),
-        sensor_volatile_organic("volatile_organic",
-                                "Cleaning Chem, ppm", 0, 100, 1,
-                                0.5),
+        sensor_combust_gases("combust_gases", "Methane, ppm", 0, 100, 1, 0.01),
+        sensor_volatile_organic("volatile_organic", "Cleaning Chem, ppm", 0,
+                                100, 1.3, 0.01),
 
         // Heartbeat
         sensor_heartbeat("heartbeat", "Heartbeat, bpm", 0, 100, 70, 5, true),
-        sensor_locations("locations", "Location", 0, 100, 70, 0, true, {
-            {0, "Uninitialized"}, //
+        sensor_locations("locations", "Location", 0, 100, 70, 0, true, { {
+            0, "Uninitialized"}, //
             {11, "Engineering"}, //
             {13, "Engineering by Hallway"}, //
             {28, "South Wing by Engineering"}, //
