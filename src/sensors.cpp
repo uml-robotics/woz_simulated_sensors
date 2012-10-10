@@ -86,25 +86,25 @@ struct RadiationFSM
     {
       case Initial:
       {
-        if (location == "Engineering")
+        if (location == "Engineering Room")
           state = FirstAtEngineering;
         break;
       }
       case FirstAtEngineering:
       {
-        if (location == "South Wing by Engineering")
+        if (location == "South Wing by the Engineering Room")
           state = FirstOutOfEngineering;
         break;
       }
       case FirstOutOfEngineering:
       {
-        if (location == "Engineering")
+        if (location == "Engineering Room")
           state = SecondAtEngineering;
         break;
       }
       case SecondAtEngineering:
       {
-        if (location == "South Wing by Engineering")
+        if (location == "South Wing by the Engineering Room")
           state = SecondOutOfEngineering;
         break;
       }
@@ -136,29 +136,29 @@ Sensors::Sensors() :
         sensor_heartbeat("heartbeat", "Heartbeat, bpm", 0, 100, 70, 5, true),
         sensor_locations("locations", "Location", 0, 100, 70, 0, true, { {
             0, "Uninitialized"}, //
-            {11, "Engineering"}, //
-            {13, "Engineering by Hallway"}, //
-            {28, "South Wing by Engineering"}, //
-            {29, "South Wing between Engineering and Research Lab"}, //
+            {11, "Engineering Room"}, //
+            {13, "Engineering Room by the Hallway"}, //
+            {28, "South Wing by the Engineering Room"}, //
+            {29, "South Wing between the Engineering and the Research Lab"}, //
             {31, "South Wing"}, //
-            {22, "South Wing by Research"}, //
-            {32, "South Wing by South Entrance"}, //
-            {35, "South Wing by Cafeteria"}, //
+            {22, "South Wing by the Research Lab"}, //
+            {32, "South Wing by the South Entrance"}, //
+            {35, "South Wing by the Cafeteria"}, //
             {19, "Research Lab"}, //
-            {21, "Research Lab by Hallway"}, //
-            {38, "Cafeteria by SW"}, //
-            {36, "Cafeteria by Elevators"}, //
-            {34, "Cafeteria by NW"}, //
+            {21, "Research Lab by the Hallway"}, //
+            {38, "Cafeteria by the South Wing"}, //
+            {36, "Cafeteria by the Elevators"}, //
+            {34, "Cafeteria by the Control Room"}, //
             {33, "Cafeteria"}, //
             {46, "Control Room"}, //
-            {47, "Control Room by Hallway"}, //
-            {41, "North Wing by Cafeteria"}, //
-            {44, "North Wing between Control Room and Conference Room"}, //
-            {40, "North Wing"}, //
-            {42, "North Wing by North Entrance"}, //
-            {43, "North Wing by Conference Room"}, //
-            {56, "Conference Room"}, //
-            {57, "Conference Room by Hallway"}, //
+            {47, "Control Room by the Hallway"}, //
+//            {41, "North Wing by the Cafeteria"}, //
+//            {44, "North Wing between the Control Room and the Conference Room"}, //
+//            {40, "North Wing"}, //
+//            {42, "North Wing by the North Entrance"}, //
+//            {43, "North Wing by the Conference Room"}, //
+//            {56, "Conference Room"}, //
+//            {57, "Conference Room by Hallway"}, //
                          }),
         sensor_battery("battery", "Battery, V", 20, 31, 29, 0.3)
 
