@@ -75,7 +75,7 @@ Sensors::Sensors() :
         // MultiRAE Pro
         sensor_rad_gamma("gamma", "Gamma, uREM/h", 0, 20000, 34, 0.5),
         sensor_co2("co2", "Carbon Dioxide, ppm", 0, 50000, 500, 10),
-        sensor_electrochem("electrochem", "Ammonia, ppm", 0, 100, 1, 0.1, true),
+        sensor_electrochem("electrochem", "Ammonia, ppm", 0, 100, 0, 0.0, true),
         sensor_combust_gases("combust_gases", "Methane, ppm", 0, 100, 1, 0.01),
         sensor_volatile_organic("volatile_organic", "Cleaning Chem, ppm", 0,
                                 100, 1.3, 0.01),
