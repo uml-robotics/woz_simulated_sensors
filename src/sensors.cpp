@@ -20,7 +20,7 @@ public:
 
 private:
   // NeutronRAE-II
-  Sensor sensor_rad_neutron_gamma;
+//  Sensor sensor_rad_neutron_gamma;
   Sensor sensor_temperature;
 
   // MultiRAE Pro
@@ -119,13 +119,13 @@ struct RadiationFSM
 
 Sensors::Sensors() :
         // NeutronRAE-II
-        sensor_rad_neutron_gamma("neutron_gamma", "Gamma / Neutron, cpm", 0,
-                                 100, 40 / 60.0, 0.02),
+//        sensor_rad_neutron_gamma("neutron_gamma", "Gamma / Neutron, cpm", 0,
+//                                 100, 40 / 60.0, 0.02),
         sensor_temperature("temperature", "Ambient Temp., F", 0, 100, 71, 0.5,
                            true), // F
 
         // MultiRAE Pro
-        sensor_rad_gamma("gamma", "Gamma, uREM/h", 0, 20000, 34, 0.5),
+        sensor_rad_gamma("gamma", "Gamma, mSv", 1e-3, 9900, 4, 0.05),
         sensor_co2("co2", "Carbon Dioxide, ppm", 0, 50000, 500, 10),
         sensor_electrochem("electrochem", "Ammonia, ppm", 0, 100, 0, 0.0, true),
         sensor_combust_gases("combust_gases", "Methane, ppm", 0, 100, 1, 0.01),
@@ -206,7 +206,7 @@ void Sensors::update()
   msg.header.stamp = ros::Time::now();
   msg.sensors =
   {
-    sensor_rad_neutron_gamma.getValueAt(x, y),
+//    sensor_rad_neutron_gamma.getValueAt(x, y),
     sensor_temperature.getValueAt(x, y),
     sensor_rad_gamma.getValueAt(x, y),
     sensor_co2.getValueAt(x, y),
@@ -224,7 +224,7 @@ void Sensors::update()
   if (radiation_fsm_->isMalfunctioningAfterUpdate(
       sensor_locations.getValueAt(x, y).message))
   {
-    sensor_rad_gamma.setMalfunctionDelta(14320);
+    sensor_rad_gamma.setMalfunctionDelta(478);
   }
   else
   {
