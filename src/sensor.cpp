@@ -43,7 +43,8 @@ Sensor::Sensor(const std::string& id, const std::string& description,
         max_(max),
         rng_(static_cast<unsigned int>(std::clock()) + (seed *= 13 * seed)),
         nd_(mean, noise_sigma),
-        var_nor_(rng_, nd_)
+        var_nor_(rng_, nd_),
+        malfunction_delta_(0)
 {
   sensor_msg_.hardware_id = id;
   sensor_msg_.name = description;
@@ -91,8 +92,10 @@ SensorStatus Sensor::getValueAt(double x, double y)
   else
   {
     sensor_msg_.value = var_nor_();
-
   }
+
+  // Set the error
+  sensor_msg_.value += malfunction_delta_;
 
   // Set warning if value is 10% higher than normal.
   if (sensor_msg_.value > nd_.mean() * 1.1)
@@ -115,6 +118,11 @@ SensorStatus Sensor::getValueAt(double x, double y)
   }
 
   return sensor_msg_;
+}
+
+void Sensor::setMalfunctionDelta(double delta)
+{
+  malfunction_delta_ = delta;
 }
 
 } /* namespace woz_simulated_sensors */

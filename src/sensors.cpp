@@ -10,6 +10,7 @@
 
 namespace woz_simulated_sensors
 {
+struct RadiationFSM;
 class Sensors
 {
 public:
@@ -28,6 +29,7 @@ private:
   Sensor sensor_electrochem;
   Sensor sensor_combust_gases;
   Sensor sensor_volatile_organic;
+  RadiationFSM * radiation_fsm_;
 
   // Heartbeat
   Sensor sensor_heartbeat;
@@ -65,6 +67,56 @@ int main(int argc, char **argv)
 
 namespace woz_simulated_sensors
 {
+struct RadiationFSM
+{
+  typedef enum
+  {
+    Initial, FirstAtEngineering, FirstOutOfEngineering, SecondAtEngineering,
+    SecondOutOfEngineering
+  } States;
+  States state;
+  RadiationFSM() :
+          state(Initial)
+  {
+  }
+
+  bool isMalfunctioningAfterUpdate(const std::string &location)
+  {
+    switch (state)
+    {
+      case Initial:
+      {
+        if (location == "Engineering")
+          state = FirstAtEngineering;
+        break;
+      }
+      case FirstAtEngineering:
+      {
+        if (location == "South Wing by Engineering")
+          state = FirstOutOfEngineering;
+        break;
+      }
+      case FirstOutOfEngineering:
+      {
+        if (location == "Engineering")
+          state = SecondAtEngineering;
+        break;
+      }
+      case SecondAtEngineering:
+      {
+        if (location == "South Wing by Engineering")
+          state = SecondOutOfEngineering;
+        break;
+      }
+      case SecondOutOfEngineering:
+      {
+        break;
+      }
+    }
+    return state == SecondOutOfEngineering;
+  }
+};
+
 Sensors::Sensors() :
         // NeutronRAE-II
         sensor_rad_neutron_gamma("neutron_gamma", "Gamma / Neutron, cpm", 0,
@@ -127,6 +179,7 @@ Sensors::Sensors() :
 
   sensors_pub_ = nh_.advertise<woz_simulated_sensors::SensorArray>("sensors",
                                                                    1);
+  radiation_fsm_ = new RadiationFSM;
 }
 
 void Sensors::update()
@@ -166,6 +219,17 @@ void Sensors::update()
   };
 
   sensors_pub_.publish(msg);
+
+  // Simulate radiation sensor failure.
+  if (radiation_fsm_->isMalfunctioningAfterUpdate(
+      sensor_locations.getValueAt(x, y).message))
+  {
+    sensor_rad_gamma.setMalfunctionDelta(14320);
+  }
+  else
+  {
+    sensor_rad_gamma.setMalfunctionDelta(0);
+  }
 }
 
 } // namespace woz_simulated_sensors

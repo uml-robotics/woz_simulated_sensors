@@ -71,6 +71,11 @@ public:
    * @return
    */
   SensorStatus getValueAt(double x, double y);
+  /**
+   * Used for simulating sensor malfunction.
+   * @param delta The delta gets added to the normal value.
+   */
+  void setMalfunctionDelta(double delta);
 protected:
   SensorStatus sensor_msg_;
   std::string id_;
@@ -84,6 +89,8 @@ protected:
   boost::variate_generator<boost::mt19937&, boost::normal_distribution<> > var_nor_;
 
   static int seed;
+
+  double malfunction_delta_;
 
 };
 
