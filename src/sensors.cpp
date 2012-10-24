@@ -180,6 +180,7 @@ Sensors::Sensors() :
   sensors_pub_ = nh_.advertise<woz_simulated_sensors::SensorArray>("sensors",
                                                                    1);
   radiation_fsm_ = new RadiationFSM;
+  sensor_heartbeat.setPrecision(0);
 }
 
 void Sensors::update()

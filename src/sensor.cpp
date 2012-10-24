@@ -44,7 +44,8 @@ Sensor::Sensor(const std::string& id, const std::string& description,
         rng_(static_cast<unsigned int>(std::clock()) + (seed *= 13 * seed)),
         nd_(mean, noise_sigma),
         var_nor_(rng_, nd_),
-        malfunction_delta_(0)
+        malfunction_delta_(0),
+        precision_(2)
 {
   sensor_msg_.hardware_id = id;
   sensor_msg_.name = description;
@@ -117,12 +118,21 @@ SensorStatus Sensor::getValueAt(double x, double y)
     sensor_msg_.value = max_;
   }
 
+  // Limit precision
+  double mask = pow(10, precision_);
+  sensor_msg_.value = floor(sensor_msg_.value * mask) / mask;
+
   return sensor_msg_;
 }
 
 void Sensor::setMalfunctionDelta(double delta)
 {
   malfunction_delta_ = delta;
+}
+
+void Sensor::setPrecision(int precision)
+{
+  precision_ = precision;
 }
 
 } /* namespace woz_simulated_sensors */

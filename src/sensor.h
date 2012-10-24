@@ -76,6 +76,11 @@ public:
    * @param delta The delta gets added to the normal value.
    */
   void setMalfunctionDelta(double delta);
+  /**
+   * Set sensor precision
+   * @param precision Decimal places to keep
+   */
+  void setPrecision(int precision);
 protected:
   SensorStatus sensor_msg_;
   std::string id_;
@@ -90,7 +95,8 @@ protected:
 
   static int seed;
 
-  double malfunction_delta_;
+  double malfunction_delta_; ///< How much to change the value when it is malfunctioning
+  int precision_;  ///< Precision, decimal points
 
 };
 
