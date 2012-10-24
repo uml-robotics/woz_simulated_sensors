@@ -133,7 +133,7 @@ Sensors::Sensors() :
                                 100, 1.3, 0.01),
 
         // Heartbeat
-        sensor_heartbeat("heartbeat", "Heartbeat, bpm", 0, 100, 70, 5, true),
+        sensor_heartbeat("heartbeat", "Heartbeat, bpm", 0, 100, 70, 1, true),
         sensor_locations("locations", "Location", 0, 100, 70, 0, true, { {
             0, "Uninitialized"}, //
             {11, "Engineering Room"}, //
