@@ -1,12 +1,12 @@
 <launch>
 
-  <node name="simulated_sensors" pkg="woz_simulated_sensors" type="sensors" output="screen" machine="driver"/>
+  <node name="simulated_sensors" pkg="woz_simulated_sensors" type="sensors" output="screen"/>
 
 
-  <!--Gradient maps-->
+  <!--Gradient maps -->
   <group>
     <arg name="map_name" value="temperature"/>
-    <node name="map_$(arg map_name)" pkg="gradient_map_server" type="map_server" args="$(find woz_sensor_maps)/3rdfloor_10cm_$(arg map_name).yaml" machine="driver">
+    <node name="map_$(arg map_name)" pkg="gradient_map_server" type="map_server" args="$(find woz_sensor_maps)/3rdfloor_10cm_$(arg map_name).yaml">
       <remap from="map" to="/sensor_maps/$(arg map_name)"/>
       <remap from="static_map" to="/map_$(arg map_name)/static_map"/>
     </node>
@@ -14,7 +14,7 @@
 
   <group>
     <arg name="map_name" value="heartbeat"/>
-    <node name="map_$(arg map_name)" pkg="gradient_map_server" type="map_server" args="$(find woz_sensor_maps)/3rdfloor_10cm_$(arg map_name).yaml" machine="driver">
+    <node name="map_$(arg map_name)" pkg="gradient_map_server" type="map_server" args="$(find woz_sensor_maps)/3rdfloor_10cm_$(arg map_name).yaml">
       <remap from="map" to="/sensor_maps/$(arg map_name)"/>
       <remap from="static_map" to="/map_$(arg map_name)/static_map"/>
     </node>
@@ -22,7 +22,7 @@
 
   <group>
     <arg name="map_name" value="electrochem"/>
-    <node name="map_$(arg map_name)" pkg="gradient_map_server" type="map_server" args="$(find woz_sensor_maps)/3rdfloor_10cm_$(arg map_name).yaml" machine="driver">
+    <node name="map_$(arg map_name)" pkg="gradient_map_server" type="map_server" args="$(find woz_sensor_maps)/3rdfloor_10cm_$(arg map_name).yaml">
       <remap from="map" to="/sensor_maps/$(arg map_name)"/>
       <remap from="static_map" to="/map_$(arg map_name)/static_map"/>
     </node>
@@ -30,7 +30,7 @@
 
   <group>
     <arg name="map_name" value="locations"/>
-    <node name="map_$(arg map_name)" pkg="gradient_map_server" type="map_server" args="$(find woz_sensor_maps)/3rdfloor_10cm_$(arg map_name).yaml" machine="driver">
+    <node name="map_$(arg map_name)" pkg="gradient_map_server" type="map_server" args="$(find woz_sensor_maps)/3rdfloor_10cm_$(arg map_name).yaml">
       <remap from="map" to="/sensor_maps/$(arg map_name)"/>
       <remap from="static_map" to="/map_$(arg map_name)/static_map"/>
     </node>
