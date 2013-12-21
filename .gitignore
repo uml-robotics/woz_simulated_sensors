@@ -1,1 +1,39 @@
-src/*sensors
+
+# Build files
+msg_gen/
+srv_gen/
+src/woz_simulated_sensors/
+build
+doc/
+bin/
+lib/
+cmake_install.cmake
+_gtest_from_src/
+#QT
+CMakeLists.txt.user
+qtcreator-build/
+
+
+# Dynamic reconfigure
+docs/
+*.cfgc
+**/cfg/cpp/
+**/src/*/cfg/
+
+# Eclipse project
+.project
+.cproject
+.pydevproject
+.settings
+
+# Python
+*.pyc
+*.pkl
+
+
+# Temporary files
+*.swp
+*~
+
+# Mac os
+.DS_Store
