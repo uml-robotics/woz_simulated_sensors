@@ -14,8 +14,6 @@
   <depend package="tf"/>
 
   <depend package="woz_sensor_maps"/>
-  <depend package="woz_msgs"/>
-
 </package>
 
 
